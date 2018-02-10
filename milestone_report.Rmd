@@ -5,12 +5,56 @@ date: "February 10, 2018"
 output: html_document
 ---
 
+This document summarizes the United States blogs, news, and Twitter data provided for the Coursera Data Science Specialization capstone project. It also includes insights about the data and ideas about for a prediction algorithm and Shiny app based on these data.
+
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = FALSE)
+knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE)
 ```
+
+## Summarize US Twitter Data
 
 ```{r}
 
-us_twitter <- readLines("en_US.twitter.txt")
+# Get data
+us_twitter <- data.frame(readLines("en_US.twitter.txt"))
+names(us_twitter) <- "text"
+us_twitter$text <- as.character(us_twitter$text)
+
+# Format data
+us_twitter$number_chars <- nchar(us_twitter$text)
+
+```
+
+There are `r prettyNum(nrow(us_twitter), big.mark = ",", scientific = FALSE)` lines in the Twitter data.
+
+On average, there are `r prettyNum(round(mean(us_twitter$number_chars), 1), big.mark = ",", scientific = FALSE)` characters in each line.
+
+The six number summary of the number of characters in each line of the Twitter data is:
+```{r}
+
+# Summary
+summary(us_twitter$number_chars)
+
+```
+
+The following histogram shows the number of characters per line:
+```{r}
+
+# Create histogram
+hist(us_twitter$number_chars, 
+     main = "Histogram of Number of Characters per Line",
+     xlab = "Number of Characters per Line")
+
+```
+
+The following chart shows the frequency of words in the text:
+
+```{r}
+
+library(dplyr)
+library(tidytext)
+temp_twitter <- us_twitter %>%
+  unnest_tokens(word, text)
+
 
 ```
