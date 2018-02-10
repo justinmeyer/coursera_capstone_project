@@ -1,0 +1,16 @@
+---
+title: "Milestone Report"
+author: "Justin Meyer"
+date: "February 10, 2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+```{r}
+
+us_twitter <- readLines("en_US.twitter.txt")
+
+```
