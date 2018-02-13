@@ -53,8 +53,18 @@ The following chart shows the frequency of words in the text:
 
 library(dplyr)
 library(tidytext)
-temp_twitter <- us_twitter %>%
+library(ggplot2)
+
+temp_twitter <- us_twitter
+temp_twitter$number_chars <- NULL
+temp_twitter <- temp_twitter %>%
   unnest_tokens(word, text)
 
+unique_words_twitter <- temp_twitter %>%
+        anti_join(stop_words) %>%
+        count(word, sort = TRUE)
+
+ggplot(head(unique_words_twitter), aes(word, n)) + 
+        geom_bar(stat = "identity")
 
 ```
