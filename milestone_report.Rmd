@@ -47,7 +47,7 @@ hist(us_twitter$number_chars,
 
 ```
 
-The following chart shows the frequency of words in the text:
+The following chart shows the ten most common words in the text and the number of times each word was used:
 
 ```{r}
 
