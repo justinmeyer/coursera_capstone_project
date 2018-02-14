@@ -7,6 +7,8 @@ output: html_document
 
 This document summarizes the United States blogs, news, and Twitter data provided for the Coursera Data Science Specialization capstone project. It also includes insights about the data and ideas about for a prediction algorithm and Shiny app based on these data.
 
+All of the data for this project were provided by http://www.swiftkey.com.
+
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE, comment = "")
 ```
@@ -40,13 +42,16 @@ summary(source_data$number_chars)
 
 ```
 
-The following histogram shows the number of characters per line in the blogs data set:
+The following histogram shows the number of characters per line. Note that values of 1000 and higher have been binned as 1000.
 ```{r}
 
 # Create histogram
-hist(source_data$number_chars, 
+temp_histogram <- source_data
+temp_histogram$number_chars[temp_histogram$number_chars >= 1000] <- 1000
+hist(temp_histogram$number_chars, 
      main = "Histogram of Number of Characters per Line",
      xlab = "Number of Characters per Line")
+rm(temp_histogram)
 
 ```
 
@@ -66,7 +71,8 @@ temp <- temp %>%
 
 temp %>%
         anti_join(stop_words) %>%
-        filter(word != 1 & word != 2 & word != 3 & word != 4 & word != 5 & word != 6 & word != 7 & word != 8 & word != 9) %>%
+        filter(word != 1 & word != 2 & word != 3 & word != 4 & word != 5 & 
+                       word != 6 & word != 7 & word != 8 & word != 9 & word != 10) %>%
         filter(word != "Â") %>%
         count(word, sort = TRUE) %>%
         top_n(10) %>%
@@ -107,13 +113,16 @@ summary(source_data$number_chars)
 
 ```
 
-The following histogram shows the number of characters per line:
+The following histogram shows the number of characters per line. Note that values of 1000 and higher have been binned as 1000.
 ```{r}
 
 # Create histogram
-hist(source_data$number_chars, 
+temp_histogram <- source_data
+temp_histogram$number_chars[temp_histogram$number_chars >= 1000] <- 1000
+hist(temp_histogram$number_chars, 
      main = "Histogram of Number of Characters per Line",
      xlab = "Number of Characters per Line")
+rm(temp_histogram)
 
 ```
 
@@ -130,7 +139,8 @@ temp <- temp %>%
 
 temp %>%
         anti_join(stop_words) %>%
-        filter(word != 1 & word != 2 & word != 3 & word != 4 & word != 5 & word != 6 & word != 7 & word != 8 & word != 9) %>%
+        filter(word != 1 & word != 2 & word != 3 & word != 4 & word != 5 & 
+                       word != 6 & word != 7 & word != 8 & word != 9 & word != 10) %>%
         filter(word != "Â") %>%
         count(word, sort = TRUE) %>%
         top_n(10) %>%
@@ -171,7 +181,7 @@ summary(source_data$number_chars)
 
 ```
 
-The following histogram shows the number of characters per line:
+The following histogram shows the number of characters per line.
 ```{r}
 
 # Create histogram
@@ -194,7 +204,8 @@ temp <- temp %>%
 
 temp %>%
         anti_join(stop_words) %>%
-        filter(word != 1 & word != 2 & word != 3 & word != 4 & word != 5 & word != 6 & word != 7 & word != 8 & word != 9) %>%
+        filter(word != 1 & word != 2 & word != 3 & word != 4 & word != 5 & 
+                       word != 6 & word != 7 & word != 8 & word != 9 & word != 10) %>%
         filter(word != "Â") %>%
         count(word, sort = TRUE) %>%
         top_n(10) %>%
@@ -205,3 +216,11 @@ ggplot(aes(word, n)) +
         coord_flip()
 
 ```
+
+## Interesting Findings
+
+The main finding that I noticed was that, even though blogs, news and Twitter are very different media, many of the most common words were shared across these sources. For example, the words time, people, and day were in the top ten most common words in all three data sources. This implies that the same prediction algorithm might work for all three data sources, though there certainly are differences between the three. For example, "rt" for retweet appears as one of the top 10 words in the Twitter data but isn't present in the other two sources.
+
+## Plan for Creating a Prediction Algorithm and Shiny App
+
+I plan to make a Shiny app where the user enters a phrase and the app predicts the next word, much like the suggested words that are provided when the user types a text on a smartphone. I'm not sure if it will base the prediction on the number of words entered, what those words are, or some other characteristic. I think it will depend on the data that is provided and the specifics of the task.
