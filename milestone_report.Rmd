@@ -1,47 +1,50 @@
 ---
-title: "Milestone Report"
+title: "Coursera Capstone Project Milestone Report"
 author: "Justin Meyer"
-date: "February 10, 2018"
+date: "February 13, 2018"
 output: html_document
 ---
 
 This document summarizes the United States blogs, news, and Twitter data provided for the Coursera Data Science Specialization capstone project. It also includes insights about the data and ideas about for a prediction algorithm and Shiny app based on these data.
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE)
+knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE, comment = "")
 ```
 
-## Summarize US Twitter Data
+## Summary of the US Blogs Data
 
 ```{r}
 
 # Get data
-us_twitter <- data.frame(readLines("en_US.twitter.txt"))
-names(us_twitter) <- "text"
-us_twitter$text <- as.character(us_twitter$text)
+source_data <- data.frame(readLines("en_US.blogs.txt"))
+names(source_data) <- "text"
+source_data$text <- as.character(source_data$text)
+
+# Convert to remove strange characters
+source_data$text <- iconv(source_data$text, "utf-8", "ascii", sub = "")
 
 # Format data
-us_twitter$number_chars <- nchar(us_twitter$text)
+source_data$number_chars <- nchar(source_data$text)
 
 ```
 
-There are `r prettyNum(nrow(us_twitter), big.mark = ",", scientific = FALSE)` lines in the Twitter data.
+There are `r prettyNum(nrow(source_data), big.mark = ",", scientific = FALSE)` lines in the blogs data.
 
-On average, there are `r prettyNum(round(mean(us_twitter$number_chars), 1), big.mark = ",", scientific = FALSE)` characters in each line.
+On average, there are `r prettyNum(round(mean(source_data$number_chars), 1), big.mark = ",", scientific = FALSE)` characters in each line in the blogs data set. The median number of characters in each line is `r prettyNum(round(median(source_data$number_chars), 1), big.mark = ",", scientific = FALSE)`. The longest line contains `r prettyNum(round(max(source_data$number_chars), 1), big.mark = ",", scientific = FALSE)` characters while the shortest only contains `r prettyNum(round(min(source_data$number_chars), 1), big.mark = ",", scientific = FALSE)` characters. 
 
-The six number summary of the number of characters in each line of the Twitter data is:
+The six number summary of the number of characters in each line of the blogs data is:
 ```{r}
 
 # Summary
-summary(us_twitter$number_chars)
+summary(source_data$number_chars)
 
 ```
 
-The following histogram shows the number of characters per line:
+The following histogram shows the number of characters per line in the blogs data set:
 ```{r}
 
 # Create histogram
-hist(us_twitter$number_chars, 
+hist(source_data$number_chars, 
      main = "Histogram of Number of Characters per Line",
      xlab = "Number of Characters per Line")
 
@@ -51,17 +54,148 @@ The following chart shows the ten most common words in the text and the number o
 
 ```{r}
 
+# Count instances of each word and make chart 
 library(dplyr)
 library(tidytext)
 library(ggplot2)
 
-temp_twitter <- us_twitter
-temp_twitter$number_chars <- NULL
-temp_twitter <- temp_twitter %>%
+temp <- source_data
+temp$number_chars <- NULL
+temp <- temp %>%
   unnest_tokens(word, text)
 
-temp_twitter %>%
+temp %>%
         anti_join(stop_words) %>%
+        filter(word != 1 & word != 2 & word != 3 & word != 4 & word != 5 & word != 6 & word != 7 & word != 8 & word != 9) %>%
+        filter(word != "Â") %>%
+        count(word, sort = TRUE) %>%
+        top_n(10) %>%
+        mutate(word = reorder(word, n)) %>%
+ggplot(aes(word, n)) + 
+        geom_col(stat = "identity") + 
+        xlab(NULL) + 
+        coord_flip()
+
+```
+
+## Summary of the US News Data
+
+```{r}
+
+# Get data
+source_data <- data.frame(readLines("en_US.news.txt"))
+names(source_data) <- "text"
+source_data$text <- as.character(source_data$text)
+
+# Convert to remove strange characters
+source_data$text <- iconv(source_data$text, "utf-8", "ascii", sub = "")
+
+# Format data
+source_data$number_chars <- nchar(source_data$text)
+
+```
+
+There are `r prettyNum(nrow(source_data), big.mark = ",", scientific = FALSE)` lines in the news data.
+
+On average, there are `r prettyNum(round(mean(source_data$number_chars), 1), big.mark = ",", scientific = FALSE)` characters in each line. The median number of characters in each line is `r prettyNum(round(median(source_data$number_chars), 1), big.mark = ",", scientific = FALSE)`. The longest line contains `r prettyNum(round(max(source_data$number_chars), 1), big.mark = ",", scientific = FALSE)` characters while the shortest only contains `r prettyNum(round(min(source_data$number_chars), 1), big.mark = ",", scientific = FALSE)` characters. 
+
+The six number summary of the number of characters in each line of the news data is:
+```{r}
+
+# Summary
+summary(source_data$number_chars)
+
+```
+
+The following histogram shows the number of characters per line:
+```{r}
+
+# Create histogram
+hist(source_data$number_chars, 
+     main = "Histogram of Number of Characters per Line",
+     xlab = "Number of Characters per Line")
+
+```
+
+The following chart shows the ten most common words in the text and the number of times each word was used:
+
+```{r}
+
+# Count instances of each word and make chart 
+
+temp <- source_data
+temp$number_chars <- NULL
+temp <- temp %>%
+  unnest_tokens(word, text)
+
+temp %>%
+        anti_join(stop_words) %>%
+        filter(word != 1 & word != 2 & word != 3 & word != 4 & word != 5 & word != 6 & word != 7 & word != 8 & word != 9) %>%
+        filter(word != "Â") %>%
+        count(word, sort = TRUE) %>%
+        top_n(10) %>%
+        mutate(word = reorder(word, n)) %>%
+ggplot(aes(word, n)) + 
+        geom_col(stat = "identity") + 
+        xlab(NULL) + 
+        coord_flip()
+
+```
+
+## Summary of the US Twitter Data
+
+```{r}
+
+# Get data
+source_data <- data.frame(readLines("en_US.twitter.txt"))
+names(source_data) <- "text"
+source_data$text <- as.character(source_data$text)
+
+# Convert to remove strange characters
+source_data$text <- iconv(source_data$text, "utf-8", "ascii", sub = "")
+
+# Format data
+source_data$number_chars <- nchar(source_data$text)
+
+```
+
+There are `r prettyNum(nrow(source_data), big.mark = ",", scientific = FALSE)` lines in the Twitter data.
+
+On average, there are `r prettyNum(round(mean(source_data$number_chars), 1), big.mark = ",", scientific = FALSE)` characters in each line. The median number of characters in each line is `r prettyNum(round(median(source_data$number_chars), 1), big.mark = ",", scientific = FALSE)`. The longest line contains `r prettyNum(round(max(source_data$number_chars), 1), big.mark = ",", scientific = FALSE)` characters while the shortest only contains `r prettyNum(round(min(source_data$number_chars), 1), big.mark = ",", scientific = FALSE)` characters. 
+
+The six number summary of the number of characters in each line of the Twitter data is:
+```{r}
+
+# Summary
+summary(source_data$number_chars)
+
+```
+
+The following histogram shows the number of characters per line:
+```{r}
+
+# Create histogram
+hist(source_data$number_chars, 
+     main = "Histogram of Number of Characters per Line",
+     xlab = "Number of Characters per Line")
+
+```
+
+The following chart shows the ten most common words in the text and the number of times each word was used:
+
+```{r}
+
+# Count instances of each word and make chart 
+
+temp <- source_data
+temp$number_chars <- NULL
+temp <- temp %>%
+  unnest_tokens(word, text)
+
+temp %>%
+        anti_join(stop_words) %>%
+        filter(word != 1 & word != 2 & word != 3 & word != 4 & word != 5 & word != 6 & word != 7 & word != 8 & word != 9) %>%
+        filter(word != "Â") %>%
         count(word, sort = TRUE) %>%
         top_n(10) %>%
         mutate(word = reorder(word, n)) %>%
