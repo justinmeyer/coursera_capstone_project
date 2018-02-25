@@ -51,19 +51,22 @@ rm(grams2, grams3, grams4)
 library(stringr)
 temp <- data.frame(str_split_fixed(grams2_frequency$content, " ", 2))
 temp$match_phrase <- temp$X1
-temp <- subset(temp, select = "match_phrase")
+temp$final_word <- temp$X2
+temp <- subset(temp, select = c("match_phrase", "final_word"))
 grams2_frequency <- cbind(grams2_frequency, temp)
 rm(temp)
 
 temp <- data.frame(str_split_fixed(grams3_frequency$content, " ", 3))
 temp$match_phrase <- paste(temp$X1, temp$X2)
-temp <- subset(temp, select = "match_phrase")
+temp$final_word <- temp$X3
+temp <- subset(temp, select = c("match_phrase", "final_word"))
 grams3_frequency <- cbind(grams3_frequency, temp)
 rm(temp)
 
 temp <- data.frame(str_split_fixed(grams4_frequency$content, " ", 4))
 temp$match_phrase <- paste(temp$X1, temp$X2, temp$x3)
-temp <- subset(temp, select = "match_phrase")
+temp$final_word <- temp$X4
+temp <- subset(temp, select = c("match_phrase", "final_word"))
 grams4_frequency <- cbind(grams4_frequency, temp)
 rm(temp)
 
