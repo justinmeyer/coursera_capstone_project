@@ -47,7 +47,27 @@ grams4_frequency <- data.frame(content = featnames(grams4), frequency = colSums(
                                row.names = NULL, stringsAsFactors = FALSE)
 rm(grams2, grams3, grams4)
 
+# Create phrase to match with user input text
+library(stringr)
+temp <- data.frame(str_split_fixed(grams2_frequency$content, " ", 2))
+temp$match_phrase <- temp$X1
+temp <- subset(temp, select = "match_phrase")
+grams2_frequency <- cbind(grams2_frequency, temp)
+rm(temp)
+
+temp <- data.frame(str_split_fixed(grams3_frequency$content, " ", 3))
+temp$match_phrase <- paste(temp$X1, temp$X2)
+temp <- subset(temp, select = "match_phrase")
+grams3_frequency <- cbind(grams3_frequency, temp)
+rm(temp)
+
+temp <- data.frame(str_split_fixed(grams4_frequency$content, " ", 4))
+temp$match_phrase <- paste(temp$X1, temp$X2, temp$x3)
+temp <- subset(temp, select = "match_phrase")
+grams4_frequency <- cbind(grams4_frequency, temp)
+rm(temp)
+
 # Save frequencies
-save(grams2_frequency, grams3_frequency, grams4_frequency, file = "frequencies.Rdata")
+save(grams2_frequency, grams3_frequency, grams4_frequency, file = "ngram_frequencies.Rdata")
 rm(grams2_frequency, grams3_frequency, grams4_frequency)
 
