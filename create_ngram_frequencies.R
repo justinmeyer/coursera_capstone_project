@@ -25,7 +25,7 @@ sample <- iconv(sample, "latin1", "ASCII", sub = "")
 sample <- tolower(sample)
 
 # Remove special characters
-sample <- gsub("[.]|[,]|[!]|[;]|[:]|[@]|[#]|[&]|[(]|[)]|[-]|[/]|[']", "", sample)
+sample <- gsub("[.]|[,]|[!]|[?]|[<]|[>]|[;]|[:]|[@]|[#]|[&]|[(]|[)]|[-]|[/]|[']", "", sample)
 
 # Remove numbers
 sample <- gsub("[0-9]+", "", sample)
@@ -64,7 +64,7 @@ grams3_frequency <- cbind(grams3_frequency, temp)
 rm(temp)
 
 temp <- data.frame(str_split_fixed(grams4_frequency$content, " ", 4))
-temp$match_phrase <- paste(temp$X1, temp$X2, temp$x3)
+temp$match_phrase <- paste(temp$X1, temp$X2, temp$X3)
 temp$final_word <- temp$X4
 temp <- subset(temp, select = c("match_phrase", "final_word"))
 grams4_frequency <- cbind(grams4_frequency, temp)

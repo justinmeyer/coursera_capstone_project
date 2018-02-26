@@ -4,7 +4,7 @@ library(shiny)
 shinyUI(fluidPage(
   
   # Title
-  titlePanel("Coursera Data Science Capstone Word Predictor"),
+  titlePanel("test"),
   
   # Create sidebar layout
   sidebarLayout(
