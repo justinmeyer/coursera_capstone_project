@@ -90,7 +90,10 @@ shinyServer(function(input, output) {
           # If input text is one word
           if(length(input_text) == 1){
 
-                  words_to_match <- word_1
+                  # Get last word from input text
+                  word_1 <- input_text[length(input_text)]
+                  
+                  words_to_match <- trimws(paste(word_1), "l")
                   # rm(word_1)
                   
                   # Find n-grams where the match phrase is the sames as the input text
@@ -110,7 +113,7 @@ shinyServer(function(input, output) {
                   if(nrow(matches) < 1){
                           
                           # Return an error message for now
-                          final_word <- "no one-word matches"
+                          final_word <- "no matches"
                           }
           }
   final_word
