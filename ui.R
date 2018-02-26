@@ -1,4 +1,5 @@
 library(shiny)
+library(plotly)
 
 # Define UI
 shinyUI(fluidPage(
@@ -17,7 +18,8 @@ shinyUI(fluidPage(
     
     # Show the predicted word
     mainPanel(
-       dataTableOutput("table_predictions")
+       dataTableOutput("table_predictions"),
+       plotlyOutput("plot_predictions")
     )
   )
 ))

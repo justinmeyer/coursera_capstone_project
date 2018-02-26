@@ -1,4 +1,6 @@
 library(shiny)
+library(plotly)
+library(ggplot2)
 
 # Get n-gram frequencies
 load("ngram_frequencies.Rdata")
@@ -6,9 +8,11 @@ load("ngram_frequencies.Rdata")
 # Define server
 shinyServer(function(input, output) {
   
-        # Make 
+        # Make reactive
         selectData <- reactive({
 
+        ### Create table of predicted next words
+                
         # Convert to lower
         input_text <- tolower(input$input_text)
         
@@ -133,7 +137,7 @@ shinyServer(function(input, output) {
         return(matches)
   })
         
-  # Predict next word and output text
+  # Create table
   output$table_predictions <- renderDataTable({
     
           matches <-  selectData()
@@ -142,6 +146,21 @@ shinyServer(function(input, output) {
           names(matches) <- c("Predicted Next Word", "Times Pattern was Observed in Sample Data")
           matches
           
-  }, options = list(lengthMenu = c(10, 25, 50), pageLength = 10))
+  }, options = list(lengthMenu = c(5, 10, 20), pageLength = 5))
+  
+  # Create plot
+  output$plot_predictions <- renderPlotly({
+          
+          matches <-  selectData()
+          p <- ggplot(data = head(matches, 10), 
+                      aes(x = reorder(final_word, -frequency), y = frequency)) +
+                  geom_bar(stat="identity", fill = "cornflowerblue") +
+                  labs(x = "Predicted Next Word", 
+                       y = "Times Pattern was Observed in Sample Data", 
+                       title = "Top 10 Predicted Words") +
+                  theme_bw()
+          
+          p <- ggplotly(p)
+  })
   
 })
