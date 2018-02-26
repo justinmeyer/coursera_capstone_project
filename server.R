@@ -12,7 +12,16 @@ shinyServer(function(input, output) {
           # Get input text
           input_text <- input$input_text
           
-          # Format input text
+          # Convert to lower
+          input_text <- tolower(input_text)
+          
+          # Remove special characters
+          input_text <- gsub("[.]|[,]|[!]|[?]|[<]|[>]|[;]|[:]|[@]|[#]|[&]|[(]|[)]|[-]|[/]|[']", "", input_text)
+          
+          # Remove numbers
+          input_text <- gsub("[0-9]+", "", input_text)
+          
+          # Split input text 
           input_text <- unlist(strsplit(input_text, " "))
           
           # If input text is three words or longer
@@ -36,11 +45,13 @@ shinyServer(function(input, output) {
                         best_match <- subset(matches, frequency == max(matches$frequency))
                         
                         # Return the predicted word
-                        final_word <- as.character(best_match$final_word)
+                        if(nrow(best_match) == 1){
+                                final_word <- as.character(best_match$final_word)
+                        }
                   }
                   
-                  # If no match is found
-                  if(nrow(matches) < 1){
+                  # If no match is found or more than one word ties for best match
+                  if(nrow(matches) < 1 | nrow(best_match) > 1){
                           
                           # Cut input_text down to two words
                           input_text <- trimws(paste(word_2, word_1), "l")
@@ -73,11 +84,13 @@ shinyServer(function(input, output) {
                           best_match <- subset(matches, frequency == max(matches$frequency))
                           
                           # Return the predicted word
-                          final_word <- as.character(best_match$final_word)
+                          if(nrow(best_match) == 1){
+                                  final_word <- as.character(best_match$final_word)
+                          }
                   }
                   
-                  # If no match is found
-                  if(nrow(matches) < 1){
+                  # If no match is found or more than one word ties for best match
+                  if(nrow(matches) < 1 | nrow(best_match) > 1){
                           
                           # Cut input_text down to one word
                           input_text <- trimws(paste(word_1), "l")
@@ -106,14 +119,16 @@ shinyServer(function(input, output) {
                           best_match <- subset(matches, frequency == max(matches$frequency))
                           
                           # Return the predicted word
-                          final_word <- as.character(best_match$final_word)
+                          if(nrow(best_match) == 1){
+                                  final_word <- as.character(best_match$final_word)
+                          }
                   }
                   
-                  # If no match is found
-                  if(nrow(matches) < 1){
+                  # If no match is found or more than one word ties for best match
+                  if(nrow(matches) < 1 | nrow(best_match) > 1){
                           
                           # Return an error message for now
-                          final_word <- "no matches"
+                          final_word <- "no good matches"
                           }
           }
   final_word
