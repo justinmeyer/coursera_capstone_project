@@ -17,7 +17,7 @@ shinyUI(fluidPage(
     
     # Show the predicted word
     mainPanel(
-       textOutput("output_text")
+       tableOutput("table_predictions")
     )
   )
 ))

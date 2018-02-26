@@ -7,10 +7,11 @@ load("ngram_frequencies.Rdata")
 shinyServer(function(input, output) {
   
   # Predict next word and output text
-  output$output_text <- renderText({
+  output$table_predictions <- renderTable({
     
           # Get input text
           input_text <- input$input_text
+          input_text <- "nba all star"
           
           # Convert to lower
           input_text <- tolower(input_text)
@@ -36,22 +37,21 @@ shinyServer(function(input, output) {
                   # rm(word_3, word_2, word_1)
                   
                   # Find n-grams where the match phrase is the sames as the input text
-                  matches <- subset(grams4_frequency, match_phrase == words_to_match)
-                  
+                  matches <- head(subset(grams4_frequency, match_phrase == words_to_match), 10)
+
                   # If a match is found
                   if(nrow(matches) >= 1){
-                        
-                        # Return the n-gram that is most likely based on frequency
-                        best_match <- subset(matches, frequency == max(matches$frequency))
-                        
-                        # Return the predicted word
-                        if(nrow(best_match) == 1){
-                                final_word <- as.character(best_match$final_word)
-                        }
+                          
+                          # Format matches
+                          matches <- matches[order(-matches$frequency), ]
+                          matches$match_phrase <- NULL
                   }
                   
-                  # If no match is found or more than one word ties for best match
-                  if(nrow(matches) < 1 | nrow(best_match) > 1){
+                  # If no matches are found
+                  if(nrow(matches) < 1){
+                          
+                          # Delete empty matches object
+                          rm(matches)
                           
                           # Cut input_text down to two words
                           input_text <- trimws(paste(word_2, word_1), "l")
@@ -75,28 +75,30 @@ shinyServer(function(input, output) {
                   # rm(word_2, word_1)
                   
                   # Find n-grams where the match phrase is the sames as the input text
-                  matches <- subset(grams3_frequency, match_phrase == words_to_match)
+                  matches <- head(subset(grams3_frequency, match_phrase == words_to_match), 10)
                   
                   # If a match is found
                   if(nrow(matches) >= 1){
                           
-                          # Return the n-gram that is most likely based on frequency
-                          best_match <- subset(matches, frequency == max(matches$frequency))
-                          
-                          # Return the predicted word
-                          if(nrow(best_match) == 1){
-                                  final_word <- as.character(best_match$final_word)
-                          }
+                          # Format matches
+                          matches <- matches[order(-matches$frequency), ]
+                          matches$match_phrase <- NULL
                   }
                   
-                  # If no match is found or more than one word ties for best match
-                  if(nrow(matches) < 1 | nrow(best_match) > 1){
+                  # If no matches are found
+                  if(nrow(matches) < 1){
+                          
+                          # Delete empty matches object
+                          rm(matches)
                           
                           # Cut input_text down to one word
                           input_text <- trimws(paste(word_1), "l")
                           
-                          }
-                  
+                          # Format input text
+                          input_text <- unlist(strsplit(input_text, " "))
+                          
+                  }
+
                   # rm(word_2, word_1, words_to_match, matches)
           }
           
@@ -110,28 +112,33 @@ shinyServer(function(input, output) {
                   # rm(word_1)
                   
                   # Find n-grams where the match phrase is the sames as the input text
-                  matches <- subset(grams2_frequency, match_phrase == words_to_match)
-                  
+                  matches <- head(subset(grams2_frequency, match_phrase == words_to_match), 10)
+
                   # If a match is found
                   if(nrow(matches) >= 1){
                           
-                          # Return the n-gram that is most likely based on frequency
-                          best_match <- subset(matches, frequency == max(matches$frequency))
-                          
-                          # Return the predicted word
-                          if(nrow(best_match) == 1){
-                                  final_word <- as.character(best_match$final_word)
-                          }
+                          # Format matches
+                          matches <- matches[order(-matches$frequency), ]
+                          matches$match_phrase <- NULL
                   }
                   
-                  # If no match is found or more than one word ties for best match
-                  if(nrow(matches) < 1 | nrow(best_match) > 1){
+                  # If no matches are found
+                  if(nrow(matches) < 1){
+                          
+                          # Delete empty matches object
+                          rm(matches)
                           
                           # Return an error message for now
-                          final_word <- "no good matches"
-                          }
+                          matches <- "no good matches"
+                          
+                  }
+                  
           }
-  final_word
-  })
+          
+          # Return table of matches
+          names(matches) <- c("Predicted Next Word", "Times Pattern was Observed in Sample Data")
+          matches
+          
+  }, digits = 0)
   
 })
