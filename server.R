@@ -7,12 +7,11 @@ load("ngram_frequencies.Rdata")
 shinyServer(function(input, output) {
   
   # Predict next word and output text
-  output$table_predictions <- renderTable({
+  output$table_predictions <- renderDataTable({
     
           # Get input text
           input_text <- input$input_text
-          input_text <- "nba all star"
-          
+
           # Convert to lower
           input_text <- tolower(input_text)
           
@@ -37,7 +36,7 @@ shinyServer(function(input, output) {
                   # rm(word_3, word_2, word_1)
                   
                   # Find n-grams where the match phrase is the sames as the input text
-                  matches <- head(subset(grams4_frequency, match_phrase == words_to_match), 10)
+                  matches <- subset(grams4_frequency, match_phrase == words_to_match)
 
                   # If a match is found
                   if(nrow(matches) >= 1){
@@ -75,7 +74,7 @@ shinyServer(function(input, output) {
                   # rm(word_2, word_1)
                   
                   # Find n-grams where the match phrase is the sames as the input text
-                  matches <- head(subset(grams3_frequency, match_phrase == words_to_match), 10)
+                  matches <- subset(grams3_frequency, match_phrase == words_to_match)
                   
                   # If a match is found
                   if(nrow(matches) >= 1){
@@ -112,7 +111,7 @@ shinyServer(function(input, output) {
                   # rm(word_1)
                   
                   # Find n-grams where the match phrase is the sames as the input text
-                  matches <- head(subset(grams2_frequency, match_phrase == words_to_match), 10)
+                  matches <- subset(grams2_frequency, match_phrase == words_to_match)
 
                   # If a match is found
                   if(nrow(matches) >= 1){
@@ -139,6 +138,6 @@ shinyServer(function(input, output) {
           names(matches) <- c("Predicted Next Word", "Times Pattern was Observed in Sample Data")
           matches
           
-  }, digits = 0)
+  }, options = list(lengthMenu = c(10, 25, 50), pageLength = 10))
   
 })

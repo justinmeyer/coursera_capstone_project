@@ -25,7 +25,7 @@ sample <- iconv(sample, "latin1", "ASCII", sub = "")
 sample <- tolower(sample)
 
 # Remove special characters
-sample <- gsub("[.]|[,]|[!]|[?]|[<]|[>]|[;]|[:]|[@]|[#]|[&]|[(]|[)]|[-]|[/]|[']", "", sample)
+sample <- gsub("[.]|[,]|[!]|[?]|[<]|[>]|[;]|[:]|[@]|[#]|[&]|[(]|[)]|[-]|[/]|[']|[\"]", "", sample)
 
 # Remove numbers
 sample <- gsub("[0-9]+", "", sample)
