@@ -9,7 +9,7 @@ load("ngram_frequencies.Rdata")
 shinyServer(function(input, output) {
   
         # Make reactive
-        selectData <- reactive({
+        selectData <- eventReactive(input$go, {
 
         ### Create table of predicted next words
                 
