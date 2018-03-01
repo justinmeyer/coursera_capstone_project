@@ -128,9 +128,9 @@ shinyServer(function(input, output) {
                         # Delete empty matches object
                         rm(matches)
                         
-                        # Return an error message for now
-                        matches <- "no good matches"
-                        
+                        # Return most common unigram
+                        matches <- grams1_frequency
+
                 }
                 
         }

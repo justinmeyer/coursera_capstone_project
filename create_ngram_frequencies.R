@@ -53,8 +53,8 @@ rm(grams1, grams2, grams3, grams4)
 # Calculate most common unigram
 # Because there is only one word there is no need to create a phrase to match 
 # with user input text as below
-grams1_most_common <- subset(grams1_frequency, grams1_frequency$frequency == max(grams1_frequency$frequency))
-rm(grams1_frequency)
+grams1_frequency <- subset(grams1_frequency, grams1_frequency$frequency == max(grams1_frequency$frequency))
+names(grams1_frequency) <- c("final_word", "frequency")
 
 # Create phrase to match with user input text
 library(stringr)
@@ -91,6 +91,6 @@ grams3_frequency <- subset(grams3_frequency, frequency > 1)
 grams4_frequency <- subset(grams4_frequency, frequency > 1)
 
 # Save frequencies
-save(grams1_most_common, grams2_frequency, grams3_frequency, grams4_frequency, file = "ngram_frequencies.Rdata")
-rm(grams1_most_common, grams2_frequency, grams3_frequency, grams4_frequency)
+save(grams1_frequency, grams2_frequency, grams3_frequency, grams4_frequency, file = "ngram_frequencies.Rdata")
+rm(grams1_frequency, grams2_frequency, grams3_frequency, grams4_frequency)
 
