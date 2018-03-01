@@ -32,6 +32,7 @@ sample <- gsub("[0-9]+", "", sample)
 
 # Create ngrams
 library(quanteda)
+grams1 <- dfm(paste(sample, collapse = " "), ngrams = 1, concatenator = " ")
 grams2 <- dfm(paste(sample, collapse = " "), ngrams = 2, concatenator = " ")
 grams3 <- dfm(paste(sample, collapse = " "), ngrams = 3, concatenator = " ")
 grams4<- dfm(paste(sample, collapse = " "), ngrams = 4, concatenator = " ")
@@ -39,13 +40,21 @@ rm(sample)
 
 # Create frequency table of grams
 # From https://stackoverflow.com/questions/36181361/convert-dfmsparse-from-quanteda-package-to-data-frame-or-data-table-in-r
+grams1_frequency <- data.frame(content = featnames(grams1), frequency = colSums(grams1),
+                               row.names = NULL, stringsAsFactors = FALSE)
 grams2_frequency <- data.frame(content = featnames(grams2), frequency = colSums(grams2),
                                row.names = NULL, stringsAsFactors = FALSE)
 grams3_frequency <- data.frame(content = featnames(grams3), frequency = colSums(grams3),
                                row.names = NULL, stringsAsFactors = FALSE)
 grams4_frequency <- data.frame(content = featnames(grams4), frequency = colSums(grams4),
                                row.names = NULL, stringsAsFactors = FALSE)
-rm(grams2, grams3, grams4)
+rm(grams1, grams2, grams3, grams4)
+
+# Calculate most common unigram
+# Because there is only one word there is no need to create a phrase to match 
+# with user input text as below
+grams1_most_common <- subset(grams1_frequency, grams1_frequency$frequency == max(grams1_frequency$frequency))
+rm(grams1_frequency)
 
 # Create phrase to match with user input text
 library(stringr)
@@ -82,6 +91,6 @@ grams3_frequency <- subset(grams3_frequency, frequency > 1)
 grams4_frequency <- subset(grams4_frequency, frequency > 1)
 
 # Save frequencies
-save(grams2_frequency, grams3_frequency, grams4_frequency, file = "ngram_frequencies.Rdata")
-rm(grams2_frequency, grams3_frequency, grams4_frequency)
+save(grams1_most_common, grams2_frequency, grams3_frequency, grams4_frequency, file = "ngram_frequencies.Rdata")
+rm(grams1_most_common, grams2_frequency, grams3_frequency, grams4_frequency)
 
