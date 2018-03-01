@@ -1,42 +1,41 @@
-Presentation
+Coursera Data Science Capstone Next Word Predictor
 ========================================================
 author: Justin Meyer
-date: 2/27/2018
+date: 3/1/2018
 autosize: true
 
-Slide 2
+Introduction to Next Word Prediction
 ========================================================
 
-For more details on authoring R presentations please visit <https://support.rstudio.com/hc/en-us/articles/200486468>.
+You may have noticed that when you text or type an email on a smartphone it offers you a few words to choose from that it thinks might be the next word. If you select one of the predicted words it saves you some typing. These words aren't random but instead are based on sophisticated predictions.
 
-- Bullet 1
-- Bullet 2
-- Bullet 3
+![Image of a smartphone keyboard with predicted words](presentation-figure/_SWIFKEY.GIF)
 
-Slide 3
+Next Word Predictor Web App
 ========================================================
 
+To meet the requirements of the [Coursera/Johns Hopkins School of Public Health Data Science Specialization] (https://www.coursera.org/specializations/jhu-data-science) capstone I've created a [Shiny](https://shiny.rstudio.com/) web app that, when given one or more words, predicts the next word.
 
-```r
-summary(cars)
-```
+The app can be found at <https://justinmeyer.shinyapps.io/coursera_capstone_project/>. *Enter a word or words to return a table of predicted words and a chart of their frequencies in the source data.*
 
-```
-     speed           dist       
- Min.   : 4.0   Min.   :  2.00  
- 1st Qu.:12.0   1st Qu.: 26.00  
- Median :15.0   Median : 36.00  
- Mean   :15.4   Mean   : 42.98  
- 3rd Qu.:19.0   3rd Qu.: 56.00  
- Max.   :25.0   Max.   :120.00  
-```
+![Screenshot of the word predictor app](presentation-figure/word_predictor.png)
 
-Slide 4
+How Does It Work? 
 ========================================================
 
-![plot of chunk unnamed-chunk-2](presentation-figure/unnamed-chunk-2-1.png)
+- First, all of the n-grams (combinations of n words) are extracted from a corpora of text. In this case, blogs, news, and Twitter data were used.  
+- Next, a table of the number of times each bigram, trigram, and quadgram appears is created.
+- If the user enters **one word**, that word is matched to the first word in the **bigram table**. The app returns a list of second words that typically follow the word that the user entered.
+- If **two words** are entered the **trigram table** is used.
+- If **three words** are entered the **quadgram table** is used.
+- If **more words** are entered then only the last three words are considered and the **quadgram table** is used.
 
-Slide 5
+Back-off Model
 ========================================================
 
-![plot of chunk unnamed-chunk-3](presentation-figure/unnamed-chunk-3-1.png)
+Sometimes the words that are entered do not have a match. When this happens the [back-off model](https://en.wikipedia.org/wiki/Katz%27s_back-off_model) is used.  
+
+For example, imagine that three words are entered.
+- First the app tries to match all three words. If there is a match, a predicted word is returned.
+- If there is no match, the app tries to match only the last two words. If there is a match, a predicted word is returned.
+- If there is no match, the app tries to match only the last word. If there is a match, a predicted word is returned.
